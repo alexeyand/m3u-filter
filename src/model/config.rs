@@ -48,6 +48,23 @@ const RESERVED_PATHS: &[&str] = &[
     "get.php", "apiget", "m3u", "resource"
 ];
 
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[serde(untagged)]
+pub enum EpgUrl {
+    Single(String),
+    Multiple(Vec<String>),
+}
+
+impl EpgUrl {
+    pub fn to_vec(&self) -> Vec<String> {
+        match self {
+            EpgUrl::Single(s) => vec![s.clone()],
+            EpgUrl::Multiple(v) => v.clone(),
+        }
+    }
+}
+
+
 #[macro_export]
 macro_rules! valid_property {
   ($key:expr, $array:expr) => {{
@@ -760,7 +777,7 @@ pub struct ConfigInput {
     pub headers: HashMap<String, String>,
     pub url: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub epg_url: Option<String>,
+    pub epg_url: Option<EpgUrl>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub username: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
