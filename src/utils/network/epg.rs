@@ -17,7 +17,6 @@ use crate::model::xmltv::TVGuide;
 use crate::model::xmltv::{EPG_ATTRIB_ID, EPG_TAG_CHANNEL, EPG_TAG_PROGRAMME};
 use crate::utils::file::file_utils::prepare_file_path;
 use crate::utils::network::request;
-use crate::utils::file::file_utils;
 
 /*
 pub async fn get_xmltv(client: Arc<reqwest::Client>, _cfg: &Config, input: &ConfigInput, working_dir: &str) -> (Option<TVGuide>, Vec<M3uFilterError>) {
