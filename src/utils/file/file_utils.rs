@@ -150,6 +150,18 @@ pub fn get_file_path(wd: &str, path: Option<PathBuf>) -> Option<PathBuf> {
 
 pub fn add_prefix_to_filename(path: &Path, prefix: &str, ext: Option<&str>) -> PathBuf {
     let file_name = path.file_name().unwrap_or_default();
+    let new_file_name = format!("{}_{}", prefix, file_name.to_string_lossy());
+    let result = path.with_file_name(new_file_name);
+    match ext {
+        None => result,
+        Some(extension) => result.with_extension(extension)
+    }
+}
+
+
+/*
+pub fn add_prefix_to_filename(path: &Path, prefix: &str, ext: Option<&str>) -> PathBuf {
+    let file_name = path.file_name().unwrap_or_default();
     let new_file_name = format!("{}{}", prefix, file_name.to_string_lossy());
     let result = path.with_file_name(new_file_name);
     match ext {
@@ -157,6 +169,7 @@ pub fn add_prefix_to_filename(path: &Path, prefix: &str, ext: Option<&str>) -> P
         Some(extension) => result.with_extension(extension)
     }
 }
+*/
 
 pub fn path_exists(file_path: &Path) -> bool {
     if let Ok(metadata) = fs::metadata(file_path) {
