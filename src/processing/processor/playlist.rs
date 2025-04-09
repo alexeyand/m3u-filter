@@ -6,6 +6,7 @@ use crate::utils::network::epg;
 use crate::utils::network::m3u;
 use crate::utils::network::xtream;
 use core::cmp::Ordering;
+use std::fs::File;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::{Arc};
@@ -324,11 +325,26 @@ async fn process_source(client: Arc<reqwest::Client>, cfg: Arc<Config>, source_i
                 InputType::Xtream => xtream::get_xtream_playlist(Arc::clone(&client), input, &cfg.working_dir).await,
                 InputType::M3uBatch | InputType::XtreamBatch => (vec![], vec![])
             };
-            let (tvguide, mut tvguide_errors) = if error_list.is_empty() {
-                epg::get_xmltv(Arc::clone(&client), &cfg, input, &cfg.working_dir).await
+
+            let (tv_guides, mut tvguide_errors) = epg::get_xmltvs(Arc::clone(&client), &cfg, input, &cfg.working_dir).await;
+            let tvguide = if !tv_guides.is_empty() {
+                let epg_paths = tv_guides.iter().map(|g| g.file.clone()).collect::<Vec<_>>();
+                let (epgs, parse_errors) = epg::parse_epgs(&epg_paths);
+                tvguide_errors.extend(parse_errors);
+                let merged_epg = epg::merge_epgs_dedup(epgs);
+                let merged_path = PathBuf::from(format!("{}/merged_epg_{}.xml", &cfg.working_dir, input.id));
+                {
+                    let mut writer = quick_xml::Writer::new(File::create(&merged_path).expect("Can't write merged EPG"));
+                    merged_epg
+                        .write_to(&mut writer)
+                        .expect("Failed to write merged EPG");
+                }
+            
+                Some(TVGuide { file: merged_path })
             } else {
-                (None, vec![])
+                None
             };
+                        
             errors.append(&mut error_list);
             errors.append(&mut tvguide_errors);
             let group_count = playlistgroups.len();
