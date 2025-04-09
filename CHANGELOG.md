@@ -1,4 +1,24 @@
 # Changelog
+# 2.2.? (2025-04-09)
+- added the ability to configure multiple EPG sources/files. 
+Config examples:
+  
+One EPG source:
+```yaml
+    epg_url: 'https://provider.one/epg.xml'
+```
+
+------ OR ------
+
+Multiple EPG sources:
+```yaml
+    epg_url:
+      - 'file:///config/epg.xml'
+      - 'https://epg-source.one/epg.xml'
+      - 'https://epg-source.two/epg.xml'
+      - 'http://provider.one/xmltv.php?username=aaaa&password=aaaa'
+```
+
 # 2.2.6 (2025-03-xx)
 - !BREAKING CHANGE!  bandwidth `throttle_kbps` attribute for `reverse_proxy.stream` in  `config.yml`
   is now `throttle` and supports units. Allowed units are `KB/s`,`MB/s`,`KiB/s`,`MiB/s`,`kbps`,`mbps`,`Mibps`.
