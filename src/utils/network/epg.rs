@@ -4,7 +4,6 @@ use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
-use std::path::Path;
 
 use std::collections::HashSet;
 use std::collections::hash_map::DefaultHasher;
@@ -15,7 +14,6 @@ use crate::m3u_filter_error::{M3uFilterError, M3uFilterErrorKind};
 use crate::model::config::{Config, ConfigInput};
 use crate::model::xmltv::TVGuide;
 use crate::model::xmltv::{EPG_ATTRIB_ID, EPG_TAG_CHANNEL, EPG_TAG_PROGRAMME};
-use crate::utils::file::file_utils::prepare_file_path;
 use crate::utils::network::request;
 
 /*
